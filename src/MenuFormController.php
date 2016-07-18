@@ -30,6 +30,7 @@ class MenuFormController extends DefaultMenuFormController {
    *
    * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @return array
    */
   protected function buildOverviewForm(array &$form, FormStateInterface $form_state) {
     return $this->buildOverviewFormWithDepth($form, $form_state, 1, NULL);
@@ -38,11 +39,13 @@ class MenuFormController extends DefaultMenuFormController {
   /**
    * Build a shallow version of the overview form.
    *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @param int $depth
-   * @param NULL $menuOpen
+   * @param string $menu_link
    * @return array
    */
-  protected function buildOverviewFormWithDepth(array &$form, FormStateInterface $form_state, $depth = 1, MenuLinkContent $menu_link = NULL) {
+  protected function buildOverviewFormWithDepth(array &$form, FormStateInterface $form_state, $depth = 1, $menu_link = NULL) {
     // Ensure that menu_overview_form_submit() knows the parents of this form
     // section.
     if (!$form_state->has('menu_overview_form_parents')) {
@@ -130,7 +133,7 @@ class MenuFormController extends DefaultMenuFormController {
     $tree_params->setMaxDepth($depth);
 
     if ($root) {
-      $tree_params->setRoot($root->getPluginId());
+      $tree_params->setRoot($root);
     }
 
     $tree = $this->menuTree->load($this->entity->id(), $tree_params);
@@ -197,6 +200,7 @@ class MenuFormController extends DefaultMenuFormController {
           ),
           $element['title'],
         );
+
         $form['links'][$id]['enabled'] = $element['enabled'];
         $form['links'][$id]['enabled']['#wrapper_attributes']['class'] = array('checkbox', 'menu-enabled');
 
